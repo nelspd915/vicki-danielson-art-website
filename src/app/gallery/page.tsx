@@ -39,10 +39,26 @@ export default async function GalleryPage() {
   // Filter artworks: show all except hidden
   const visibleArtworks = artworks?.filter((art: Artwork) => art.status !== "Hidden") || [];
 
-  // Separate by status for different sections
-  const availableArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Available");
-  const unavailableArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Unavailable");
-  const soldArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Sold");
+  // Sort artworks: featured first, then by creation date (newest first)
+  const sortedArtworks = visibleArtworks.sort((a: Artwork, b: Artwork) => {
+    // Featured artworks go to the top
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+
+    // If both are featured or both are not featured, sort by creation date (newest first)
+    // Note: _createdAt is not in our current query, so we'll use a combination of year and _id as fallback
+    if (a.year && b.year && a.year !== b.year) {
+      return b.year - a.year; // Newer years first
+    }
+
+    // Fallback to _id comparison for consistent ordering
+    return b._id.localeCompare(a._id);
+  });
+
+  // Calculate stats for display
+  const availableCount = visibleArtworks.filter((art: Artwork) => art.status === "Available").length;
+  const unavailableCount = visibleArtworks.filter((art: Artwork) => art.status === "Unavailable").length;
+  const soldCount = visibleArtworks.filter((art: Artwork) => art.status === "Sold").length;
 
   // Total count includes hidden works
   const totalWorks = artworks?.length || 0;
@@ -59,84 +75,61 @@ export default async function GalleryPage() {
 
         {/* Stats */}
         <div className="flex justify-center gap-8 mt-8 text-sm theme-muted-text">
-          <span>{availableArtworks.length} Available</span>
+          <span>{availableCount} Available</span>
           <span>•</span>
-          <span>{unavailableArtworks.length} Unavailable</span>
+          <span>{unavailableCount} Unavailable</span>
           <span>•</span>
-          <span>{soldArtworks.length} Sold</span>
+          <span>{soldCount} Sold</span>
           <span>•</span>
           <span>{totalWorks} Total Works</span>
         </div>
       </div>
 
-      {/* Available Artworks */}
-      {availableArtworks.length > 0 && (
-        <section className="mb-16">
-          <h2 className="text-2xl font-semibold mb-8 flex items-center">
-            <span className="w-3 h-3 bg-green-500 rounded-full mr-3"></span>
-            Available Works
-          </h2>
-
+      {/* Consolidated Gallery */}
+      {sortedArtworks.length > 0 ? (
+        <section>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {availableArtworks.map((artwork: Artwork) => {
+            {sortedArtworks.map((artwork: Artwork) => {
               const first = artwork.images?.[0];
               const src = first ? urlFor(first).width(1200).height(1500).fit("crop").url() : undefined;
-              return (
-                <Link
-                  key={artwork._id}
-                  href={`/art/${artwork.slug}`}
-                  className="group rounded-2xl overflow-hidden theme-border border hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="relative aspect-[4/5] theme-muted-bg">
-                    {src && (
-                      <Image
-                        src={src}
-                        alt={artwork.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        priority={false}
-                      />
-                    )}
-                    <div className="absolute top-4 right-4 flex gap-2">
+
+              // Determine status badge and styling
+              const getStatusBadge = () => {
+                switch (artwork.status) {
+                  case "Available":
+                    return (
                       <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
                         AVAILABLE
                       </span>
-                      {artwork.featured && (
-                        <span className="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-semibold">
-                          FEATURED
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="font-semibold text-lg mb-2">{artwork.title}</div>
-                    <div className="text-sm theme-muted-text mb-3">
-                      {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
-                    </div>
-                    {artwork.price != null && (
-                      <div className="text-lg font-semibold text-green-600">{formatPrice(artwork.price)}</div>
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
+                    );
+                  case "Unavailable":
+                    return (
+                      <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        UNAVAILABLE
+                      </span>
+                    );
+                  case "Sold":
+                    return (
+                      <span className="bg-gray-600 text-white px-3 py-1 rounded-full text-xs font-semibold">SOLD</span>
+                    );
+                  default:
+                    return null;
+                }
+              };
 
-      {/* Unavailable Artworks */}
-      {unavailableArtworks.length > 0 && (
-        <section className="mb-16">
-          <h2 className="text-2xl font-semibold mb-8 flex items-center">
-            <span className="w-3 h-3 bg-orange-500 rounded-full mr-3"></span>
-            Currently Unavailable
-          </h2>
+              const getStatusMessage = () => {
+                switch (artwork.status) {
+                  case "Available":
+                    return artwork.price != null ? formatPrice(artwork.price) : "Contact for pricing";
+                  case "Unavailable":
+                    return "Currently not available for purchase";
+                  case "Sold":
+                    return "This piece has found its forever home";
+                  default:
+                    return "";
+                }
+              };
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {unavailableArtworks.map((artwork: Artwork) => {
-              const first = artwork.images?.[0];
-              const src = first ? urlFor(first).width(1200).height(1500).fit("crop").url() : undefined;
               return (
                 <Link
                   key={artwork._id}
@@ -155,9 +148,7 @@ export default async function GalleryPage() {
                       />
                     )}
                     <div className="absolute top-4 right-4 flex gap-2">
-                      <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                        UNAVAILABLE
-                      </span>
+                      {getStatusBadge()}
                       {artwork.featured && (
                         <span className="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-semibold">
                           FEATURED
@@ -166,60 +157,27 @@ export default async function GalleryPage() {
                     </div>
                   </div>
                   <div className="p-6">
-                    <div className="font-semibold text-lg mb-2">{artwork.title}</div>
+                    <div className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors duration-300">
+                      {artwork.title}
+                    </div>
                     <div className="text-sm theme-muted-text mb-3">
                       {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
                     </div>
-                    <div className="text-sm theme-muted-text">Currently not available for purchase</div>
+                    <div
+                      className={`text-sm ${artwork.status === "Available" && artwork.price != null ? "text-lg font-semibold text-green-600" : "theme-muted-text"}`}
+                    >
+                      {getStatusMessage()}
+                    </div>
                   </div>
                 </Link>
               );
             })}
           </div>
         </section>
-      )}
-
-      {/* Sold Artworks */}
-      {soldArtworks.length > 0 && (
-        <section>
-          <h2 className="text-2xl font-semibold mb-8 flex items-center">
-            <span className="w-3 h-3 bg-gray-400 rounded-full mr-3"></span>
-            Sold Works
-          </h2>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 opacity-75">
-            {soldArtworks.map((artwork: Artwork) => {
-              const first = artwork.images?.[0];
-              const src = first ? urlFor(first).width(1200).height(1500).fit("crop").url() : undefined;
-              return (
-                <div key={artwork._id} className="rounded-2xl overflow-hidden theme-border border">
-                  <div className="relative aspect-[4/5] theme-muted-bg">
-                    {src && (
-                      <Image
-                        src={src}
-                        alt={artwork.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover"
-                        priority={false}
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                      <span className="bg-gray-600 text-white px-4 py-2 rounded-full font-semibold">SOLD</span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="font-semibold text-lg mb-2">{artwork.title}</div>
-                    <div className="text-sm theme-muted-text mb-3">
-                      {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
-                    </div>
-                    <div className="text-sm theme-muted-text">This piece has found its forever home</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+      ) : (
+        <div className="text-center py-16">
+          <p className="text-lg theme-muted-text">No artworks to display</p>
+        </div>
       )}
 
       {/* Empty State */}

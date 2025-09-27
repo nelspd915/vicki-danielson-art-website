@@ -2,6 +2,7 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { artworkBySlugQuery } from "@/lib/queries";
+import { formatPrice } from "@/lib/config";
 
 // Type for slug data from Sanity
 interface SlugItem {
@@ -42,9 +43,25 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
           {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
         </div>
         {artwork.status === "Available" && artwork.price != null && (
-          <div className="mt-4 text-lg">Price: ${artwork.price}</div>
+          <div className="mt-4 text-lg">Price: {formatPrice(artwork.price)}</div>
         )}
-        {artwork.status !== "Available" && <div className="mt-4 text-lg">{artwork.status}</div>}
+        {artwork.status === "Sold" && (
+          <div className="mt-4">
+            <div className="text-lg font-semibold text-gray-600 mb-2">This piece has been sold</div>
+            <div className="text-sm theme-muted-text">This artwork has found its forever home with a collector.</div>
+          </div>
+        )}
+        {artwork.status === "Unavailable" && (
+          <div className="mt-4">
+            <div className="text-lg font-semibold text-orange-600 mb-2">Currently Unavailable</div>
+            <div className="text-sm theme-muted-text">This piece is temporarily not available for purchase.</div>
+          </div>
+        )}
+        {artwork.status === "Hidden" && (
+          <div className="mt-4">
+            <div className="text-lg font-semibold theme-muted-text">Private Collection</div>
+          </div>
+        )}
         {artwork.status === "Available" && artwork.price != null && (
           <form
             action={async () => {
@@ -71,7 +88,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
               type="submit"
               className="mt-6 rounded-lg theme-border border px-6 py-3 theme-hover transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Buy Now - ${artwork.price}
+              Buy Now - {formatPrice(artwork.price)}
             </button>
           </form>
         )}
