@@ -21,3 +21,11 @@ export const artworkBySlugQuery = `*[_type=="artwork" && slug.current == $slug][
   status,
   description
 }`;
+
+export const collectionsQuery = `*[_type=="collection"]{
+  _id, title, "slug": slug.current, heroImage
+} | order(title asc)`;
+
+export const artworksByCollectionQuery = `*[_type=="artwork" && references(^._id)]{
+  _id, title, "slug": slug.current, images, medium, dimensions, year, price, status
+}`;

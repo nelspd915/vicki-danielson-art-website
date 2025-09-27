@@ -45,7 +45,36 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
           <div className="mt-4 text-lg">Price: ${artwork.price}</div>
         )}
         {artwork.status !== "Available" && <div className="mt-4 text-lg">{artwork.status}</div>}
-        {/* Replace with a Buy or Inquire button later */}
+        {artwork.status === "Available" && artwork.price != null && (
+          <form
+            action={async () => {
+              "use server";
+              const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/checkout`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: artwork.title, price: artwork.price, slug })
+              });
+
+              if (!res.ok) {
+                console.error("Failed to create checkout session");
+                return;
+              }
+
+              const { url } = await res.json();
+              if (url) {
+                const { redirect } = await import("next/navigation");
+                redirect(url);
+              }
+            }}
+          >
+            <button
+              type="submit"
+              className="mt-6 rounded-lg border px-6 py-3 hover:bg-white hover:text-black transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Buy Now - ${artwork.price}
+            </button>
+          </form>
+        )}
       </div>
     </main>
   );

@@ -54,7 +54,7 @@ export default async function HomePage() {
                   {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
                 </div>
                 {artwork.status === "Available" && artwork.price != null && (
-                  <div className="mt-2 text-sm">From ${artwork.price}</div>
+                  <div className="mt-2 text-sm">${artwork.price}</div>
                 )}
               </div>
             </Link>
