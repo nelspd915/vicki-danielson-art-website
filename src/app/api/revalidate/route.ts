@@ -9,11 +9,29 @@ export async function POST(request: NextRequest) {
     // Verify the webhook secret if configured
     const authHeader = request.headers.get("authorization");
     if (webhookSecret) {
-      const providedSecret = authHeader?.replace("Bearer ", "");
+      // Try different authorization formats
+      let providedSecret;
+
+      if (authHeader?.startsWith("Bearer ")) {
+        providedSecret = authHeader.replace("Bearer ", "");
+      } else if (authHeader) {
+        // Sometimes Sanity sends without "Bearer " prefix
+        providedSecret = authHeader;
+      }
+
+      console.log("🔐 Checking webhook auth:", {
+        hasSecret: !!webhookSecret,
+        hasAuthHeader: !!authHeader,
+        authHeaderFormat: authHeader?.substring(0, 10) + "...",
+        secretsMatch: providedSecret === webhookSecret
+      });
+
       if (!providedSecret || providedSecret !== webhookSecret) {
-        console.log("❌ Unauthorized webhook request");
+        console.log("❌ Unauthorized webhook request - secrets don't match");
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
+
+      console.log("✅ Webhook authorized successfully");
     }
 
     const body = await request.json();
