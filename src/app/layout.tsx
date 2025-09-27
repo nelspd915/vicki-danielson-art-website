@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { siteConfig } from "@/lib/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vicki Danielson Art",
-  description: "Contemporary art gallery featuring original paintings and artwork"
+  title: siteConfig.name,
+  description: siteConfig.description
 };
 
 export default function RootLayout({
@@ -36,7 +37,7 @@ export default function RootLayout({
         >
           <header className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="text-xl font-semibold">
-              Vicki Danielson Art
+              {siteConfig.name}
             </Link>
             <div className="flex items-center gap-4">
               <nav className="text-sm opacity-80">
