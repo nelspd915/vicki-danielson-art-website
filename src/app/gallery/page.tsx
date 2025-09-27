@@ -38,12 +38,12 @@ export default async function GalleryPage() {
 
   // Filter artworks: show all except hidden
   const visibleArtworks = artworks?.filter((art: Artwork) => art.status !== "Hidden") || [];
-  
+
   // Separate by status for different sections
   const availableArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Available");
   const unavailableArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Unavailable");
   const soldArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Sold");
-  
+
   // Total count includes hidden works
   const totalWorks = artworks?.length || 0;
 
