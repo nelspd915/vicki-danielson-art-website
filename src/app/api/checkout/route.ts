@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { client } from "@/sanity/lib/client";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-08-27.basil"
@@ -11,6 +12,22 @@ export async function POST(request: NextRequest) {
 
     if (!title || !price || !slug) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    // Check if artwork is still available before creating checkout session
+    const artwork = await client.fetch(`*[_type == "artwork" && slug.current == $slug][0]{ status }`, { slug });
+
+    if (!artwork) {
+      return NextResponse.json({ error: "Artwork not found" }, { status: 404 });
+    }
+
+    if (artwork.status !== "Available") {
+      return NextResponse.json(
+        {
+          error: "This artwork is no longer available for purchase"
+        },
+        { status: 409 }
+      );
     }
 
     // Create Stripe checkout session

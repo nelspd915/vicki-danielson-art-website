@@ -23,7 +23,18 @@ export default function BuyButton({ title, price, slug }: BuyButtonProps) {
       });
 
       if (!res.ok) {
-        console.error("Failed to create checkout session");
+        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
+
+        if (res.status === 409) {
+          // Artwork no longer available
+          alert(
+            "Sorry, this artwork is no longer available for purchase. The page will refresh to show the current status."
+          );
+          window.location.reload();
+        } else {
+          console.error("Failed to create checkout session");
+          alert(`Unable to process purchase: ${errorData.error}`);
+        }
         return;
       }
 
