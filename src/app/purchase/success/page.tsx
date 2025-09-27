@@ -53,13 +53,13 @@ async function SuccessContent({ sessionId }: { sessionId: string | undefined }) 
         <div className="pt-6 space-x-4">
           <Link
             href="/"
-            className="inline-block px-6 py-3 theme-card-bg theme-card-text rounded-lg theme-hover transition-colors"
+            className="inline-block px-8 py-4 bg-black text-white dark:bg-white dark:text-black font-semibold rounded-lg hover:opacity-90 transition-all shadow-md"
           >
             Continue Shopping
           </Link>
           <Link
             href="/contact"
-            className="inline-block px-6 py-3 theme-border border theme-text rounded-lg theme-hover transition-colors"
+            className="inline-block px-6 py-3 theme-border border theme-muted-text rounded-lg theme-hover transition-colors text-sm"
           >
             Contact Us
           </Link>
