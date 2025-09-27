@@ -3,24 +3,67 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --primary: #171717;
+  --primary-foreground: #ffffff;
+  --muted: #f5f5f5;
+  --muted-foreground: #6b7280;
+  --border: #e5e7eb;
+  --hover-bg: #f9fafb;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #111111;
+  --card-foreground: #ededed;
+  --primary: #ededed;
+  --primary-foreground: #0a0a0a;
+  --muted: #1a1a1a;
+  --muted-foreground: #9ca3af;
+  --border: #2a2a2a;
+  --hover-bg: #1f1f1f;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Custom utility classes for theme-aware styling */
+.theme-bg {
+  background-color: var(--background);
+}
+
+.theme-text {
+  color: var(--foreground);
+}
+
+.theme-card-bg {
+  background-color: var(--card);
+}
+
+.theme-card-text {
+  color: var(--card-foreground);
+}
+
+.theme-muted-bg {
+  background-color: var(--muted);
+}
+
+.theme-muted-text {
+  color: var(--muted-foreground);
+}
+
+.theme-border {
+  border-color: var(--border);
+}
+
+.theme-hover:hover {
+  background-color: var(--hover-bg);
 }

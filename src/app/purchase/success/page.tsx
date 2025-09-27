@@ -13,7 +13,7 @@ async function SuccessContent({ sessionId }: { sessionId: string | undefined }) 
         <p className="mb-6">No valid session ID found.</p>
         <Link
           href="/"
-          className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+          className="inline-block px-6 py-3 theme-card-bg theme-card-text theme-border border rounded-lg theme-hover transition-colors"
         >
           Return Home
         </Link>
@@ -30,18 +30,18 @@ async function SuccessContent({ sessionId }: { sessionId: string | undefined }) 
           </svg>
         </div>
         <h1 className="text-3xl font-semibold text-green-600 mb-4">Purchase Successful!</h1>
-        <p className="text-lg text-gray-400 mb-6">
+        <p className="text-lg theme-muted-text mb-6">
           Thank you for your purchase! You will receive a confirmation email shortly.
         </p>
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <p className="text-sm text-gray-600">
+        <div className="theme-muted-bg rounded-lg p-4 mb-6">
+          <p className="text-sm theme-muted-text">
             <strong>Session ID:</strong> {sessionId}
           </p>
         </div>
       </div>
 
       <div className="space-y-4">
-        <div className="text-gray-400">
+        <div className="theme-muted-text">
           <p className="mb-2">What happens next?</p>
           <ul className="text-sm space-y-1">
             <li>• You&apos;ll receive an email confirmation</li>
@@ -53,13 +53,13 @@ async function SuccessContent({ sessionId }: { sessionId: string | undefined }) 
         <div className="pt-6 space-x-4">
           <Link
             href="/"
-            className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+            className="inline-block px-6 py-3 theme-card-bg theme-card-text rounded-lg theme-hover transition-colors"
           >
             Continue Shopping
           </Link>
           <Link
             href="/contact"
-            className="inline-block px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            className="inline-block px-6 py-3 theme-border border theme-text rounded-lg theme-hover transition-colors"
           >
             Contact Us
           </Link>

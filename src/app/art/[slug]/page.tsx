@@ -25,7 +25,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="mx-auto max-w-5xl p-6 grid gap-6 lg:grid-cols-2">
-      <div className="relative aspect-[4/5] bg-black/5 rounded-2xl overflow-hidden">
+      <div className="relative aspect-[4/5] theme-muted-bg rounded-2xl overflow-hidden">
         {src && (
           <Image
             src={src}
@@ -38,7 +38,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
       </div>
       <div>
         <h1 className="text-3xl font-semibold">{artwork.title}</h1>
-        <div className="mt-2 opacity-70">
+        <div className="mt-2 theme-muted-text">
           {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
         </div>
         {artwork.status === "Available" && artwork.price != null && (
@@ -69,7 +69,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
           >
             <button
               type="submit"
-              className="mt-6 rounded-lg border px-6 py-3 hover:bg-white hover:text-black transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-6 rounded-lg theme-border border px-6 py-3 theme-hover transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Buy Now - ${artwork.price}
             </button>

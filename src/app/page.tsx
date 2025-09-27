@@ -35,8 +35,12 @@ export default async function HomePage() {
           const first = artwork.images?.[0];
           const src = first ? urlFor(first).width(1200).height(1500).fit("crop").url() : undefined;
           return (
-            <Link key={artwork._id} href={`/art/${artwork.slug}`} className="group rounded-2xl overflow-hidden border">
-              <div className="relative aspect-[4/5] bg-black/5">
+            <Link
+              key={artwork._id}
+              href={`/art/${artwork.slug}`}
+              className="group rounded-2xl overflow-hidden theme-border border"
+            >
+              <div className="relative aspect-[4/5] theme-muted-bg">
                 {src && (
                   <Image
                     src={src}
@@ -50,7 +54,7 @@ export default async function HomePage() {
               </div>
               <div className="p-4">
                 <div className="font-medium">{artwork.title}</div>
-                <div className="text-sm opacity-70">
+                <div className="text-sm theme-muted-text">
                   {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
                 </div>
                 {artwork.status === "Available" && artwork.price != null && (
