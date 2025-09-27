@@ -16,36 +16,23 @@ export default function BuyButton({ title, price, slug }: BuyButtonProps) {
     setIsLoading(true);
 
     try {
-      console.log("Creating checkout session for:", { title, price, slug });
-
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, price, slug })
       });
 
-      console.log("Checkout API response:", { status: res.status, ok: res.ok });
-
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
-        console.error("Failed to create checkout session:", res.status, errorData);
-        alert(`Failed to create checkout session: ${errorData.error || "Unknown error"}`);
+        console.error("Failed to create checkout session");
         return;
       }
 
       const { url } = await res.json();
-      console.log("Received checkout URL:", url);
-
       if (url) {
-        console.log("Redirecting to Stripe checkout...");
         window.location.href = url;
-      } else {
-        console.error("No checkout URL returned");
-        alert("No checkout URL returned from server");
       }
     } catch (error) {
       console.error("Error creating checkout session:", error);
-      alert(`Error: ${error}`);
     } finally {
       setIsLoading(false);
     }
