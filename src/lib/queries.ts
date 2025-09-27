@@ -24,6 +24,12 @@ export const featuredQuery = `*[_type=="artwork" && featured == true] | order(ye
   featured
 }`;
 
+export const artistProfileQuery = `*[_type=="artist" && isActive == true][0]{
+  _id,
+  profileImage,
+  bio
+}`;
+
 export const artworkBySlugQuery = `*[_type=="artwork" && slug.current == $slug][0]{
   _id,
   title,

@@ -4,7 +4,7 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import Link from "next/link";
-import { galleryQuery, featuredQuery } from "@/lib/queries";
+import { galleryQuery, featuredQuery, artistProfileQuery } from "@/lib/queries";
 import { siteConfig, formatPrice, getContactEmail } from "@/lib/config";
 import { useEffect, useState } from "react";
 
@@ -26,6 +26,42 @@ interface Artwork {
   status?: "Available" | "Reserved" | "Sold";
   featured?: boolean;
 }
+
+interface Artist {
+  _id: string;
+  profileImage?: {
+    _type: "image";
+    asset: {
+      _ref: string;
+    };
+    alt?: string;
+  };
+  bio?: Array<{
+    _type: "block";
+    children: Array<{
+      text: string;
+    }>;
+  }>;
+}
+
+// Helper function to render Sanity block content as plain text
+const renderBlockText = (blocks: Artist["bio"]) => {
+  if (!blocks || blocks.length === 0) return null;
+
+  return blocks
+    .map((block, index) => {
+      if (block._type === "block" && block.children) {
+        const text = block.children.map((child) => child.text).join("");
+        return (
+          <p key={index} className="mb-4">
+            {text}
+          </p>
+        );
+      }
+      return null;
+    })
+    .filter(Boolean);
+};
 
 // Smooth scroll function
 const smoothScrollTo = (elementId: string) => {
@@ -75,6 +111,7 @@ const useScrollAnimation = () => {
 export default function HomePage() {
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
   const [allArtworks, setAllArtworks] = useState<Artwork[]>([]);
+  const [artistProfile, setArtistProfile] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Use scroll animation hook
@@ -84,11 +121,17 @@ export default function HomePage() {
     const fetchArtworks = async () => {
       console.log("Fetching artworks...");
       try {
-        const [featured, all] = await Promise.all([client.fetch(featuredQuery), client.fetch(galleryQuery)]);
+        const [featured, all, artist] = await Promise.all([
+          client.fetch(featuredQuery),
+          client.fetch(galleryQuery),
+          client.fetch(artistProfileQuery)
+        ]);
         console.log("Featured artworks:", featured);
         console.log("All artworks:", all);
+        console.log("Artist profile:", artist);
         setFeaturedArtworks(featured || []);
         setAllArtworks(all || []);
+        setArtistProfile(artist);
       } catch (error) {
         console.error("Error fetching artworks:", error);
       } finally {
@@ -257,19 +300,7 @@ export default function HomePage() {
             <div className="scroll-animate">
               <h2 className="text-3xl font-bold mb-6">About the Artist</h2>
               <div className="space-y-4 theme-muted-text text-lg leading-relaxed">
-                <p>
-                  Based in the beautiful city of {siteConfig.contact.address.city}, {siteConfig.contact.address.state},
-                  I create contemporary paintings that explore the intersection of emotion and nature.
-                </p>
-                <p>
-                  Each piece is crafted with careful attention to color harmony and composition, using traditional
-                  techniques combined with modern artistic vision to create works that speak to the soul and transform
-                  any space.
-                </p>
-                <p>
-                  My art is available for purchase and I also accept commission work for collectors seeking personalized
-                  pieces that reflect their unique vision and space.
-                </p>
+                {artistProfile?.bio && artistProfile.bio.length > 0 ? renderBlockText(artistProfile.bio) : null}
               </div>
               <div className="mt-8 flex gap-4">
                 <Link
@@ -287,14 +318,28 @@ export default function HomePage() {
               </div>
             </div>
             <div className="relative aspect-[3/4] theme-bg rounded-2xl overflow-hidden scroll-animate hover-lift">
-              {displayArtworks[1]?.images?.[0] && (
+              {/* Artist Profile Picture */}
+              {artistProfile?.profileImage ? (
                 <Image
-                  src={urlFor(displayArtworks[1].images[0]).width(600).height(800).fit("crop").url()}
-                  alt="Featured artwork"
+                  src={urlFor(artistProfile.profileImage).width(600).height(800).fit("crop").url()}
+                  alt={artistProfile.profileImage.alt || "Artist Profile Photo"}
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-110"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
+              ) : (
+                <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+                  <div className="text-center p-8">
+                    <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                      <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">Vicki Danielson</h3>
+                    <p className="text-sm theme-muted-text">Contemporary Artist</p>
+                    <p className="text-xs theme-muted-text mt-2 opacity-60">Add profile photo in Sanity CMS</p>
+                  </div>
+                </div>
               )}
             </div>
           </div>
