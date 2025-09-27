@@ -7,7 +7,21 @@ export const galleryQuery = `*[_type=="artwork"] | order(featured desc, year des
   dimensions,
   year,
   price,
-  status
+  status,
+  featured
+}`;
+
+export const featuredQuery = `*[_type=="artwork" && featured == true] | order(year desc, _createdAt desc)[0...6]{
+  _id,
+  title,
+  "slug": slug.current,
+  images,
+  medium,
+  dimensions,
+  year,
+  price,
+  status,
+  featured
 }`;
 
 export const artworkBySlugQuery = `*[_type=="artwork" && slug.current == $slug][0]{

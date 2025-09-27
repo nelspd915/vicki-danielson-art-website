@@ -2,7 +2,7 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import Link from "next/link";
-import { galleryQuery } from "@/lib/queries";
+import { galleryQuery, featuredQuery } from "@/lib/queries";
 import { siteConfig, formatPrice, getContactEmail } from "@/lib/config";
 
 // Type definition based on the Sanity schema
@@ -21,25 +21,27 @@ interface Artwork {
   year?: number;
   price?: number;
   status?: "Available" | "Reserved" | "Sold";
+  featured?: boolean;
 }
 
 export const revalidate = 60; // ISR: refresh every minute
 
 export default async function HomePage() {
-  const artworks = await client.fetch(galleryQuery);
+  // Fetch both featured artworks and all artworks for stats
+  const [featuredArtworks, allArtworks] = await Promise.all([client.fetch(featuredQuery), client.fetch(galleryQuery)]);
 
-  // Get featured artworks (first 6 available pieces)
-  const featuredArtworks = artworks?.slice(0, 6) || [];
-  const availableCount = artworks?.filter((art: Artwork) => art.status === "Available")?.length || 0;
+  // Use featured artworks if available, otherwise use first 6 from all artworks
+  const displayArtworks = featuredArtworks?.length > 0 ? featuredArtworks : allArtworks?.slice(0, 6) || [];
+  const availableCount = allArtworks?.filter((art: Artwork) => art.status === "Available")?.length || 0;
 
   return (
     <main>
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center theme-muted-bg">
         <div className="absolute inset-0 opacity-10">
-          {featuredArtworks[0]?.images?.[0] && (
+          {displayArtworks[0]?.images?.[0] && (
             <Image
-              src={urlFor(featuredArtworks[0].images[0]).width(1920).height(1080).fit("crop").url()}
+              src={urlFor(displayArtworks[0].images[0]).width(1920).height(1080).fit("crop").url()}
               alt=""
               fill
               className="object-cover"
@@ -97,10 +99,10 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="relative aspect-[3/4] theme-muted-bg rounded-2xl overflow-hidden">
-            {featuredArtworks[1]?.images?.[0] && (
+            {displayArtworks[1]?.images?.[0] && (
               <Image
-                src={urlFor(featuredArtworks[1].images[0]).width(600).height(800).fit("crop").url()}
-                alt="Artist at work"
+                src={urlFor(displayArtworks[1].images[0]).width(600).height(800).fit("crop").url()}
+                alt="Featured artwork"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -137,15 +139,18 @@ export default async function HomePage() {
       {/* Featured Gallery */}
       <section id="gallery" className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Featured Gallery</h2>
+          <h2 className="text-4xl font-bold mb-4">
+            {featuredArtworks?.length > 0 ? "Featured Gallery" : "Latest Gallery"}
+          </h2>
           <p className="text-lg theme-muted-text max-w-2xl mx-auto">
-            Discover a curated selection of available original paintings, each piece unique and ready to find its
-            perfect home.
+            {featuredArtworks?.length > 0
+              ? "Discover my hand-picked selection of featured original paintings, each piece unique and ready to find its perfect home."
+              : "Discover a selection of my latest original paintings, each piece unique and ready to find its perfect home."}
           </p>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredArtworks.map((artwork: Artwork) => {
+          {displayArtworks.map((artwork: Artwork) => {
             const first = artwork.images?.[0];
             const src = first ? urlFor(first).width(1200).height(1500).fit("crop").url() : undefined;
             return (
