@@ -2,7 +2,7 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { artworkBySlugQuery } from "@/lib/queries";
-import { formatPrice } from "@/lib/config";
+import { formatPriceExact } from "@/lib/config";
 
 // Type for slug data from Sanity
 interface SlugItem {
@@ -42,9 +42,6 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
         <div className="mt-2 theme-muted-text">
           {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
         </div>
-        {artwork.status === "Available" && artwork.price != null && (
-          <div className="mt-4 text-lg">Price: {formatPrice(artwork.price)}</div>
-        )}
         {artwork.status === "Sold" && (
           <div className="mt-4">
             <div className="text-lg font-semibold text-gray-600 mb-2">This piece has been sold</div>
@@ -88,7 +85,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
               type="submit"
               className="mt-6 rounded-lg theme-border border px-6 py-3 theme-hover transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Buy Now - {formatPrice(artwork.price)}
+              Buy Now - {formatPriceExact(artwork.price)}
             </button>
           </form>
         )}

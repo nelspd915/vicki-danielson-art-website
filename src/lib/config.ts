@@ -60,6 +60,15 @@ export const formatPrice = (price: number): string => {
   }).format(price);
 };
 
+export const formatPriceExact = (price: number): string => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(price);
+};
+
 export const getFullAddress = (): string => {
   const { city, state, country } = siteConfig.contact.address;
   return `${city}, ${state}, ${country}`;

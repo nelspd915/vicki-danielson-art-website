@@ -123,27 +123,45 @@ async function sendArtistNotification(session: Stripe.Checkout.Session) {
 
 // Update artwork status in Sanity
 async function updateArtworkStatus(artworkSlug: string) {
+  console.log("🔍 Starting updateArtworkStatus for slug:", artworkSlug);
+  console.log("🔍 SANITY_API_TOKEN present:", !!process.env.SANITY_API_TOKEN);
+
   if (!process.env.SANITY_API_TOKEN) {
     console.log("⚠️ Skipping Sanity update - missing SANITY_API_TOKEN");
+    console.log("💡 Please set SANITY_API_TOKEN in your environment variables");
     return;
   }
+
+  // Debug: Show first few characters of token (for debugging only)
+  const token = process.env.SANITY_API_TOKEN;
+  console.log("🔍 Token starts with:", token.substring(0, 8) + "...");
+  console.log("🔍 Token length:", token.length);
 
   try {
     // Create a write client for mutations
     const writeClient = client.withConfig({
       useCdn: false,
-      token: process.env.SANITY_API_TOKEN
+      token: process.env.SANITY_API_TOKEN,
+      apiVersion: "2023-05-03" // Add explicit API version
     });
 
-    // Find the artwork document by slug
-    const artwork = await client.fetch(`*[_type=="artwork" && slug.current == $slug][0]{ _id }`, { slug: artworkSlug });
+    console.log("🔍 Searching for artwork with slug:", artworkSlug);
+
+    // Find the artwork document by slug using the write client instead of read client
+    const artwork = await writeClient.fetch(`*[_type=="artwork" && slug.current == $slug][0]{ _id, title, status }`, {
+      slug: artworkSlug
+    });
 
     if (!artwork) {
-      console.error("❌ Artwork not found:", artworkSlug);
+      console.error("❌ Artwork not found for slug:", artworkSlug);
+      console.log("🔍 Checking all artwork slugs...");
+      const allArtworks = await writeClient.fetch(`*[_type=="artwork"]{ "slug": slug.current, title, status }`);
+      console.log("📋 Available artworks:", JSON.stringify(allArtworks, null, 2));
       return;
     }
 
-    console.log("📝 Updating artwork status for:", artworkSlug, "ID:", artwork._id);
+    console.log("📝 Found artwork:", { id: artwork._id, title: artwork.title, currentStatus: artwork.status });
+    console.log("📝 Updating artwork status to 'Sold'...");
 
     // Update the artwork status to "Sold"
     const result = await writeClient
@@ -154,9 +172,19 @@ async function updateArtworkStatus(artworkSlug: string) {
       })
       .commit();
 
-    console.log("✅ Artwork status updated to 'Sold':", result);
+    console.log("✅ Artwork status updated successfully:", result);
+
+    // Verify the update using the write client
+    const verifyArtwork = await writeClient.fetch(`*[_type=="artwork" && _id == $id][0]{ title, status, soldAt }`, {
+      id: artwork._id
+    });
+    console.log("🔍 Verification - updated artwork:", verifyArtwork);
   } catch (error) {
     console.error("❌ Failed to update artwork status:", error);
+    if (error instanceof Error) {
+      console.error("❌ Error message:", error.message);
+      console.error("❌ Error stack:", error.stack);
+    }
   }
 }
 
@@ -194,6 +222,8 @@ export async function POST(request: NextRequest) {
         // 1. Mark artwork as sold in Sanity
         if (session.metadata?.artwork_slug) {
           promises.push(updateArtworkStatus(session.metadata.artwork_slug));
+        } else {
+          console.error("❌ No artwork_slug in session metadata!");
         }
 
         // 2. Send confirmation email to customer
