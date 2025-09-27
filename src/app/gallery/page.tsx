@@ -95,15 +95,24 @@ export default async function GalleryPage() {
             </div>
           </div>
 
-          {/* Desktop: Horizontal Layout */}
-          <div className="hidden sm:flex justify-center gap-8 text-sm theme-muted-text">
-            <span>{availableCount} Available</span>
-            <span>•</span>
-            <span>{unavailableCount} Unavailable</span>
-            <span>•</span>
-            <span>{soldCount} Sold</span>
-            <span>•</span>
-            <span>{totalWorks} Total Works</span>
+          {/* Desktop: Horizontal Layout with Enhanced Styling */}
+          <div className="hidden sm:flex justify-center gap-8 sm:gap-12">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">{availableCount}</div>
+              <div className="text-xs theme-muted-text uppercase tracking-wide">Available</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-600">{unavailableCount}</div>
+              <div className="text-xs theme-muted-text uppercase tracking-wide">Unavailable</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-gray-600">{soldCount}</div>
+              <div className="text-xs theme-muted-text uppercase tracking-wide">Sold</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold">{totalWorks}</div>
+              <div className="text-xs theme-muted-text uppercase tracking-wide">Total Works</div>
+            </div>
           </div>
         </div>
       </div>
