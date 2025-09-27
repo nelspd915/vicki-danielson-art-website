@@ -42,7 +42,15 @@ export default function RootLayout({
             <div className="flex items-center gap-4">
               <nav className="text-sm opacity-80">
                 <Link href="/" className="hover:opacity-50">
+                  Home
+                </Link>
+                <span className="mx-3 select-none cursor-default">·</span>
+                <Link href="/gallery" className="hover:opacity-50">
                   Gallery
+                </Link>
+                <span className="mx-3 select-none cursor-default">·</span>
+                <Link href="/contact" className="hover:opacity-50">
+                  Contact
                 </Link>
                 <span className="mx-3 select-none cursor-default">·</span>
                 <Link href="/studio" className="hover:opacity-50">
