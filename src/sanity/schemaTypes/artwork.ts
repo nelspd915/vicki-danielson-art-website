@@ -44,7 +44,15 @@ export default defineType({
       type: "array",
       of: [{ type: "block" }]
     }),
-    defineField({ name: "featured", type: "boolean" })
+    defineField({ name: "featured", type: "boolean" }),
+    defineField({
+      name: "soldAt",
+      title: "Sold Date",
+      type: "datetime",
+      description: "Automatically set when artwork is sold through the website. This field cannot be edited manually.",
+      readOnly: true,
+      hidden: ({ document }) => document?.status !== "Sold"
+    })
   ],
   preview: {
     select: { title: "title", media: "thumbnail" }
