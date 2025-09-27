@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       `
     };
 
-    // Auto-reply email to the customer
+    // Auto-reply email to customer
     const customerMailOptions = {
       from: `"Vicki Danielson Art" <${process.env.SMTP_USER}>`,
       to: email,
