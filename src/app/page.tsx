@@ -23,7 +23,7 @@ interface Artwork {
   dimensions?: string;
   year?: number;
   price?: number;
-  status?: "Available" | "Reserved" | "Sold";
+  status?: "Available" | "Unavailable" | "Sold" | "Hidden";
   featured?: boolean;
 }
 
@@ -244,6 +244,11 @@ export default function HomePage() {
                       {artwork.status === "Sold" && (
                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                           <span className="bg-white text-black px-4 py-2 rounded-full font-semibold">SOLD</span>
+                        </div>
+                      )}
+                      {artwork.status === "Unavailable" && (
+                        <div className="absolute inset-0 bg-orange-600 bg-opacity-60 flex items-center justify-center">
+                          <span className="bg-white text-black px-4 py-2 rounded-full font-semibold">UNAVAILABLE</span>
                         </div>
                       )}
                       {artwork.featured && artwork.status !== "Sold" && (

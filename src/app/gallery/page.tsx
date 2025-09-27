@@ -27,7 +27,8 @@ interface Artwork {
   dimensions?: string;
   year?: number;
   price?: number;
-  status?: "Available" | "Reserved" | "Sold";
+  status?: "Available" | "Unavailable" | "Sold" | "Hidden";
+  featured?: boolean;
 }
 
 export const revalidate = 60; // ISR: refresh every minute
@@ -35,8 +36,16 @@ export const revalidate = 60; // ISR: refresh every minute
 export default async function GalleryPage() {
   const artworks = await client.fetch(galleryQuery);
 
-  const availableArtworks = artworks?.filter((art: Artwork) => art.status === "Available") || [];
-  const soldArtworks = artworks?.filter((art: Artwork) => art.status === "Sold") || [];
+  // Filter artworks: show all except hidden
+  const visibleArtworks = artworks?.filter((art: Artwork) => art.status !== "Hidden") || [];
+  
+  // Separate by status for different sections
+  const availableArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Available");
+  const unavailableArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Unavailable");
+  const soldArtworks = visibleArtworks.filter((art: Artwork) => art.status === "Sold");
+  
+  // Total count includes hidden works
+  const totalWorks = artworks?.length || 0;
 
   return (
     <main className="mx-auto max-w-6xl p-6">
@@ -52,9 +61,11 @@ export default async function GalleryPage() {
         <div className="flex justify-center gap-8 mt-8 text-sm theme-muted-text">
           <span>{availableArtworks.length} Available</span>
           <span>•</span>
+          <span>{unavailableArtworks.length} Unavailable</span>
+          <span>•</span>
           <span>{soldArtworks.length} Sold</span>
           <span>•</span>
-          <span>{artworks?.length || 0} Total Works</span>
+          <span>{totalWorks} Total Works</span>
         </div>
       </div>
 
@@ -87,10 +98,15 @@ export default async function GalleryPage() {
                         priority={false}
                       />
                     )}
-                    <div className="absolute top-4 right-4">
+                    <div className="absolute top-4 right-4 flex gap-2">
                       <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
                         AVAILABLE
                       </span>
+                      {artwork.featured && (
+                        <span className="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-semibold">
+                          FEATURED
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="p-6">
@@ -101,6 +117,60 @@ export default async function GalleryPage() {
                     {artwork.price != null && (
                       <div className="text-lg font-semibold text-green-600">{formatPrice(artwork.price)}</div>
                     )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Unavailable Artworks */}
+      {unavailableArtworks.length > 0 && (
+        <section className="mb-16">
+          <h2 className="text-2xl font-semibold mb-8 flex items-center">
+            <span className="w-3 h-3 bg-orange-500 rounded-full mr-3"></span>
+            Currently Unavailable
+          </h2>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {unavailableArtworks.map((artwork: Artwork) => {
+              const first = artwork.images?.[0];
+              const src = first ? urlFor(first).width(1200).height(1500).fit("crop").url() : undefined;
+              return (
+                <Link
+                  key={artwork._id}
+                  href={`/art/${artwork.slug}`}
+                  className="group rounded-2xl overflow-hidden theme-border border hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="relative aspect-[4/5] theme-muted-bg">
+                    {src && (
+                      <Image
+                        src={src}
+                        alt={artwork.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        priority={false}
+                      />
+                    )}
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        UNAVAILABLE
+                      </span>
+                      {artwork.featured && (
+                        <span className="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-semibold">
+                          FEATURED
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="font-semibold text-lg mb-2">{artwork.title}</div>
+                    <div className="text-sm theme-muted-text mb-3">
+                      {[artwork.medium, artwork.dimensions, artwork.year].filter(Boolean).join(" · ")}
+                    </div>
+                    <div className="text-sm theme-muted-text">Currently not available for purchase</div>
                   </div>
                 </Link>
               );

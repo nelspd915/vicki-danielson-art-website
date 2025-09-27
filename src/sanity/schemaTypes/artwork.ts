@@ -26,8 +26,17 @@ export default defineType({
     defineField({
       name: "status",
       type: "string",
-      options: { list: ["Available", "Reserved", "Sold"], layout: "radio" },
-      initialValue: "Available"
+      options: { 
+        list: [
+          { title: "Available", value: "Available" },
+          { title: "Unavailable", value: "Unavailable" },
+          { title: "Sold", value: "Sold" },
+          { title: "Hidden", value: "Hidden" }
+        ], 
+        layout: "radio" 
+      },
+      initialValue: "Available",
+      description: "Available/Unavailable show in gallery, Sold shows in gallery with overlay, Hidden doesn't show but counts in totals"
     }),
     defineField({
       name: "description",
