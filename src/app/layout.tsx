@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { siteConfig } from "@/lib/config";
+import { client } from "@/sanity/lib/client";
+import { homepageQuery } from "@/lib/queries";
+import Header from "@/components/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,16 +17,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"]
 });
 
-export const metadata: Metadata = {
-  title: siteConfig.name,
-  description: siteConfig.description
-};
+// Generate dynamic metadata from homepage configuration
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const homepage = await client.fetch(homepageQuery);
 
-export default function RootLayout({
+    return {
+      title: homepage?.navigationTitle || siteConfig.name,
+      description: homepage?.siteDescription || siteConfig.description
+    };
+  } catch (error) {
+    console.error("Error fetching metadata:", error);
+    return {
+      title: siteConfig.name,
+      description: siteConfig.description
+    };
+  }
+}
+
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch homepage data for header
+  let homepageData = null;
+  try {
+    homepageData = await client.fetch(homepageQuery);
+  } catch (error) {
+    console.error("Error fetching homepage data for header:", error);
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen theme-bg theme-text`}>
@@ -35,31 +57,7 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange={false}
         >
-          <header className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-            <Link href="/" className="text-xl font-semibold">
-              {siteConfig.name}
-            </Link>
-            <div className="flex items-center gap-4">
-              <nav className="text-sm opacity-80">
-                <Link href="/" className="hover:opacity-50">
-                  Home
-                </Link>
-                <span className="mx-3 select-none cursor-default">·</span>
-                <Link href="/gallery" className="hover:opacity-50">
-                  Gallery
-                </Link>
-                <span className="mx-3 select-none cursor-default">·</span>
-                <Link href="/contact" className="hover:opacity-50">
-                  Contact
-                </Link>
-                <span className="mx-3 select-none cursor-default">·</span>
-                <Link href="/studio" className="hover:opacity-50">
-                  Studio
-                </Link>
-              </nav>
-              <ThemeToggle />
-            </div>
-          </header>
+          <Header homepageData={homepageData} />
           {children}
         </ThemeProvider>
       </body>

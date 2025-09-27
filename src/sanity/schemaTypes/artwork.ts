@@ -44,11 +44,6 @@ export default defineType({
       type: "array",
       of: [{ type: "block" }]
     }),
-    defineField({
-      name: "collection",
-      type: "reference",
-      to: [{ type: "collection" }]
-    }),
     defineField({ name: "featured", type: "boolean" })
   ],
   preview: {
