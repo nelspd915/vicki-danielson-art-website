@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhook/stripe",
+    "stripe:login": "stripe login"
   },
   "dependencies": {
     "@sanity/client": "^7.11.2",
