@@ -2,7 +2,7 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { artworkBySlugQuery } from "@/lib/queries";
-import { formatPriceExact } from "@/lib/config";
+import BuyButton from "@/components/buy-button";
 
 // Type for slug data from Sanity
 interface SlugItem {
@@ -60,34 +60,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
           </div>
         )}
         {artwork.status === "Available" && artwork.price != null && (
-          <form
-            action={async () => {
-              "use server";
-              const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/checkout`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: artwork.title, price: artwork.price, slug })
-              });
-
-              if (!res.ok) {
-                console.error("Failed to create checkout session");
-                return;
-              }
-
-              const { url } = await res.json();
-              if (url) {
-                const { redirect } = await import("next/navigation");
-                redirect(url);
-              }
-            }}
-          >
-            <button
-              type="submit"
-              className="mt-6 rounded-lg theme-border border px-6 py-3 theme-hover transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Buy Now - {formatPriceExact(artwork.price)}
-            </button>
-          </form>
+          <BuyButton title={artwork.title} price={artwork.price} slug={slug} />
         )}
       </div>
     </main>
