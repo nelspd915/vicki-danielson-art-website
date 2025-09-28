@@ -15,8 +15,11 @@ export default function ScrollRestoration() {
 
     const restoreScrollPosition = () => {
       if (typeof window !== "undefined" && window.location.pathname === "/artwork") {
+        // Only restore if we actually came directly from an artwork detail page
+        const navigatedFromArtwork = sessionStorage.getItem("navigatedFromArtwork");
         const savedPosition = sessionStorage.getItem("artworkScrollPosition");
-        if (savedPosition) {
+
+        if (navigatedFromArtwork === "true" && savedPosition) {
           const position = parseInt(savedPosition, 10);
           // Use requestAnimationFrame to ensure DOM is fully rendered
           requestAnimationFrame(() => {
@@ -26,6 +29,9 @@ export default function ScrollRestoration() {
             });
           });
         }
+
+        // Always clear the navigation flag after checking
+        sessionStorage.removeItem("navigatedFromArtwork");
       }
     };
 
@@ -39,12 +45,16 @@ export default function ScrollRestoration() {
       const target = e.target as HTMLElement;
       const link = target.closest("a");
 
-      if (link && link.href.includes("/art/") && window.location.pathname === "/artwork") {
-        saveScrollPosition();
+      if (link && window.location.pathname === "/artwork") {
+        if (link.href.includes("/art/")) {
+          // Navigating to artwork detail page - save position and set flag
+          saveScrollPosition();
+          sessionStorage.setItem("navigatedFromArtwork", "true");
+        }
       }
     };
 
-    // Handle browser back/forward buttons and initial page load
+    // Handle browser back/forward buttons
     const handlePopState = () => {
       if (window.location.pathname === "/artwork") {
         // Small delay to ensure the page has rendered
@@ -52,7 +62,7 @@ export default function ScrollRestoration() {
       }
     };
 
-    // Restore position on initial load (for when coming back from artwork page)
+    // Handle initial page load
     const handleLoad = () => {
       if (window.location.pathname === "/artwork") {
         restoreScrollPosition();

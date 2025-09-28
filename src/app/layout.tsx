@@ -8,6 +8,7 @@ import { homepageQuery } from "@/lib/queries";
 import Header from "@/components/header";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import ScrollCleanup from "@/components/scroll-cleanup";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,6 +60,7 @@ export default async function RootLayout({
           enableSystem={true}
           disableTransitionOnChange={false}
         >
+          <ScrollCleanup />
           <Header homepageData={homepageData} />
           {children}
         </ThemeProvider>
