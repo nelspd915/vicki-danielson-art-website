@@ -6,6 +6,7 @@ import { siteConfig } from "@/lib/config";
 import { client } from "@/sanity/lib/client";
 import { homepageQuery } from "@/lib/queries";
 import Header from "@/components/header";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,6 +61,7 @@ export default async function RootLayout({
           <Header homepageData={homepageData} />
           {children}
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
