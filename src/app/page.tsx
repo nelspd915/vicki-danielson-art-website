@@ -113,7 +113,7 @@ export default async function HomePage() {
         {/* Featured Gallery - Main Focus */}
         <section id="gallery" className="max-w-7xl mx-auto px-6 py-20 scroll-animate">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Featured Gallery</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Featured Artwork</h2>
             <p className="text-xl theme-muted-text max-w-3xl mx-auto">{content.featuredGalleryText}</p>
           </div>
 
@@ -203,7 +203,7 @@ export default async function HomePage() {
               href="/gallery"
               className="inline-flex items-center bg-black text-white dark:bg-white dark:text-black px-10 py-5 rounded-lg font-semibold hover:opacity-90 transition-all duration-300 text-lg hover:scale-105 group"
             >
-              View Complete Gallery
+              View All My Artwork
               <svg
                 className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300"
                 fill="none"

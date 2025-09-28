@@ -27,7 +27,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="mx-auto max-w-5xl p-6">
-      {/* Back to Gallery Navigation */}
+      {/* Back to My Artwork Navigation */}
       <div className="mb-6">
         <Link
           href="/gallery"
@@ -41,7 +41,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Back to Gallery
+          Back to My Artwork
         </Link>
       </div>
 

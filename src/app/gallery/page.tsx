@@ -7,9 +7,9 @@ import { formatPrice } from "@/lib/config";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gallery - Vicki Danielson Art",
+  title: "My Artwork | Vicki Danielson Art",
   description:
-    "Browse the complete collection of original paintings and artwork by Vicki Danielson. Contemporary art available for purchase and commission."
+    "Browse my collection of original paintings and artwork. Contemporary art available for purchase and commission."
 };
 
 // Type definition based on the Sanity schema
@@ -67,10 +67,10 @@ export default async function GalleryPage() {
     <main className="mx-auto max-w-6xl p-6">
       {/* Header */}
       <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold mb-4">Complete Gallery</h1>
+        <h1 className="text-4xl font-bold mb-4">My Artwork</h1>
         <p className="text-lg theme-muted-text max-w-2xl mx-auto">
-          Explore my complete collection of contemporary paintings. Each piece is an original work, created with passion
-          and attention to detail.
+          Explore my collection of contemporary paintings. Each piece is an original work, created with passion and
+          attention to detail.
         </p>
 
         {/* Stats */}
