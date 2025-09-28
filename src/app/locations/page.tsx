@@ -124,11 +124,11 @@ export default async function LocationsPage() {
 
   if (!locations || locations.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-4 sm:px-6 lg:px-8 py-12">
+      <div className="min-h-screen theme-bg px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Where to Buy My Work</h1>
-            <p className="text-xl text-gray-600">Check back soon for retail locations and gallery partnerships.</p>
+            <h1 className="text-4xl font-bold mb-4">Where to Buy My Work</h1>
+            <p className="text-xl theme-muted-text">Check back soon for retail locations and gallery partnerships.</p>
           </div>
         </div>
       </div>
@@ -140,13 +140,13 @@ export default async function LocationsPage() {
   const regularLocations = locations.filter((location) => !location.featured);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen theme-bg px-4 sm:px-6 lg:px-8 py-12">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <Link
             href="/artwork"
-            className="inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors mb-6"
+            className="inline-flex items-center theme-muted-text hover:opacity-80 transition-opacity mb-6"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -154,8 +154,8 @@ export default async function LocationsPage() {
             Back to My Artwork
           </Link>
 
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Where to Buy My Work</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <h1 className="text-4xl font-bold mb-4">Where to Buy My Work</h1>
+          <p className="text-xl theme-muted-text max-w-3xl mx-auto">
             Visit these local galleries, shops, and retail partners to see and purchase my artwork in person.
           </p>
         </div>
@@ -163,7 +163,7 @@ export default async function LocationsPage() {
         {/* Featured Locations */}
         {featuredLocations.length > 0 && (
           <div className="mb-16">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-8">Featured Partners</h2>
+            <h2 className="text-2xl font-semibold mb-8">Featured Partners</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {featuredLocations.map((location) => (
                 <LocationCard key={location._id} location={location} featured />
@@ -174,7 +174,7 @@ export default async function LocationsPage() {
 
         {/* All Locations */}
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-8">
+          <h2 className="text-2xl font-semibold mb-8">
             {featuredLocations.length > 0 ? "All Retail Partners" : "Retail Partners"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -192,7 +192,9 @@ function LocationCard({ location, featured = false }: { location: Location; feat
   const imageUrl = location.images?.[0] ? urlFor(location.images[0])?.url() : null;
 
   return (
-    <div className={`bg-white rounded-2xl shadow-lg overflow-hidden ${featured ? "border-2 border-amber-200" : ""}`}>
+    <div
+      className={`theme-card rounded-2xl shadow-lg overflow-hidden theme-border border ${featured ? "border-2" : ""}`}
+    >
       {/* Image */}
       {imageUrl && (
         <div className={`relative ${featured ? "h-64" : "h-48"} bg-gray-100`}>
@@ -225,24 +227,24 @@ function LocationCard({ location, featured = false }: { location: Location; feat
       {/* Content */}
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
-          <h3 className="text-xl font-semibold text-gray-900 leading-tight">{location.name}</h3>
-          <span className="text-sm text-gray-500 capitalize bg-gray-100 px-2 py-1 rounded ml-3 flex-shrink-0">
+          <h3 className="text-xl font-semibold leading-tight">{location.name}</h3>
+          <span className="text-sm theme-muted-text capitalize theme-muted-bg px-2 py-1 rounded ml-3 flex-shrink-0">
             {location.type}
           </span>
         </div>
 
-        {location.description && <p className="text-gray-600 mb-4 line-clamp-3">{location.description}</p>}
+        {location.description && <p className="theme-muted-text mb-4 line-clamp-3">{location.description}</p>}
 
         {/* Partnership Dates */}
         {location.partnershipDates && (
-          <div className="text-sm text-gray-600 mb-3">
+          <div className="text-sm theme-muted-text mb-3">
             <span className="font-medium">Partnership:</span> {formatPartnershipDates(location.partnershipDates)}
           </div>
         )}
 
         {/* Address */}
         {location.address && (
-          <div className="text-sm text-gray-600 mb-3">
+          <div className="text-sm theme-muted-text mb-3">
             <span className="font-medium">Location:</span> {formatAddress(location.address)}
           </div>
         )}
@@ -260,7 +262,7 @@ function LocationCard({ location, featured = false }: { location: Location; feat
             </a>
           )}
           {location.contact?.phone && (
-            <a href={`tel:${location.contact.phone}`} className="text-sm text-gray-600 hover:text-gray-800">
+            <a href={`tel:${location.contact.phone}`} className="text-sm theme-muted-text hover:opacity-80">
               {location.contact.phone}
             </a>
           )}
@@ -268,10 +270,8 @@ function LocationCard({ location, featured = false }: { location: Location; feat
 
         {/* Artworks on Display */}
         {location.artworksOnDisplay && location.artworksOnDisplay.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="text-sm font-medium text-gray-900 mb-2">
-              Available Artwork ({location.artworksOnDisplay.length})
-            </div>
+          <div className="mt-4 pt-4 border-t theme-border">
+            <div className="text-sm font-medium mb-2">Available Artwork ({location.artworksOnDisplay.length})</div>
             <div className="flex -space-x-2 overflow-hidden">
               {location.artworksOnDisplay.slice(0, 4).map((artwork) => {
                 const artworkImageUrl = artwork.images?.[0] ? urlFor(artwork.images[0])?.url() : null;
@@ -292,7 +292,7 @@ function LocationCard({ location, featured = false }: { location: Location; feat
                 ) : null;
               })}
               {location.artworksOnDisplay.length > 4 && (
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 border-2 border-white text-xs font-medium text-gray-600">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full theme-muted-bg border-2 theme-card text-xs font-medium theme-muted-text">
                   +{location.artworksOnDisplay.length - 4}
                 </div>
               )}

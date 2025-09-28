@@ -164,12 +164,12 @@ export default async function LocationDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen theme-bg px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-7xl mx-auto">
         {/* Back Navigation */}
         <Link
           href="/locations"
-          className="inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors mb-8"
+          className="inline-flex items-center theme-muted-text hover:opacity-80 transition-opacity mb-8"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -181,19 +181,21 @@ export default async function LocationDetailPage({ params }: Props) {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{location.name}</h1>
+              <h1 className="text-4xl font-bold mb-2">{location.name}</h1>
               <div className="flex items-center gap-3">
                 <span
                   className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(location.status)}`}
                 >
                   {getStatusLabel(location.status)}
                 </span>
-                <span className="text-sm text-gray-500 capitalize bg-gray-100 px-2 py-1 rounded">{location.type}</span>
+                <span className="text-sm theme-muted-text capitalize theme-muted-bg px-2 py-1 rounded">
+                  {location.type}
+                </span>
               </div>
             </div>
           </div>
 
-          {location.description && <p className="text-xl text-gray-600 mt-4 max-w-4xl">{location.description}</p>}
+          {location.description && <p className="text-xl theme-muted-text mt-4 max-w-4xl">{location.description}</p>}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -206,7 +208,7 @@ export default async function LocationDetailPage({ params }: Props) {
                   {location.images.map((image, index) => {
                     const imageUrl = urlFor(image)?.url();
                     return imageUrl ? (
-                      <div key={index} className="relative aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden">
+                      <div key={index} className="relative aspect-[4/3] theme-muted-bg rounded-lg overflow-hidden">
                         <Image
                           src={imageUrl}
                           alt={image.alt || `${location.name} image ${index + 1}`}
@@ -229,21 +231,19 @@ export default async function LocationDetailPage({ params }: Props) {
             {/* Available Artwork */}
             {location.artworksOnDisplay && location.artworksOnDisplay.length > 0 && (
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                  Available Artwork ({location.artworksOnDisplay.length})
-                </h2>
+                <h2 className="text-2xl font-semibold mb-6">Available Artwork ({location.artworksOnDisplay.length})</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {location.artworksOnDisplay.map((artwork) => {
                     const imageUrl = artwork.images?.[0] ? urlFor(artwork.images[0])?.url() : null;
                     return (
                       <div
                         key={artwork._id}
-                        className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300"
+                        className="group theme-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 theme-border border"
                       >
                         {imageUrl && (
                           <Link
                             href={`/art/${artwork.slug}`}
-                            className="block relative aspect-[4/3] bg-gray-100 overflow-hidden"
+                            className="block relative aspect-[4/3] theme-muted-bg overflow-hidden"
                           >
                             <Image
                               src={imageUrl}
@@ -255,7 +255,7 @@ export default async function LocationDetailPage({ params }: Props) {
                           </Link>
                         )}
                         <div className="p-4">
-                          <h3 className="font-semibold text-gray-900 mb-1">
+                          <h3 className="font-semibold mb-1">
                             <Link
                               href={`/art/${artwork.slug}`}
                               className="group-hover:text-blue-600 transition-colors duration-300"
@@ -263,10 +263,10 @@ export default async function LocationDetailPage({ params }: Props) {
                               {artwork.title}
                             </Link>
                           </h3>
-                          {artwork.medium && <p className="text-sm text-gray-600 mb-1">{artwork.medium}</p>}
-                          {artwork.dimensions && <p className="text-sm text-gray-600 mb-2">{artwork.dimensions}</p>}
+                          {artwork.medium && <p className="text-sm theme-muted-text mb-1">{artwork.medium}</p>}
+                          {artwork.dimensions && <p className="text-sm theme-muted-text mb-2">{artwork.dimensions}</p>}
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-gray-900">{formatPrice(artwork.price)}</span>
+                            <span className="text-sm font-medium">{formatPrice(artwork.price)}</span>
                             {artwork.status === "available" && artwork.price && (
                               <BuyButton slug={artwork.slug} title={artwork.title} price={artwork.price} />
                             )}
@@ -284,28 +284,28 @@ export default async function LocationDetailPage({ params }: Props) {
           <div className="space-y-6">
             {/* Partnership Dates */}
             {location.partnershipDates && (
-              <div className="bg-white rounded-lg p-6 shadow-md">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Partnership Dates</h3>
-                <p className="text-gray-600">{formatPartnershipDates(location.partnershipDates)}</p>
+              <div className="theme-card rounded-lg p-6 shadow-md theme-border border">
+                <h3 className="text-lg font-semibold mb-3">Partnership Dates</h3>
+                <p className="theme-muted-text">{formatPartnershipDates(location.partnershipDates)}</p>
               </div>
             )}
 
             {/* Address */}
             {location.address && (
-              <div className="bg-white rounded-lg p-6 shadow-md">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Location</h3>
-                <p className="text-gray-600">{formatAddress(location.address)}</p>
+              <div className="theme-card rounded-lg p-6 shadow-md theme-border border">
+                <h3 className="text-lg font-semibold mb-3">Location</h3>
+                <p className="theme-muted-text">{formatAddress(location.address)}</p>
               </div>
             )}
 
             {/* Contact Information */}
             {location.contact && (location.contact.phone || location.contact.email || location.contact.website) && (
-              <div className="bg-white rounded-lg p-6 shadow-md">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Contact Information</h3>
+              <div className="theme-card rounded-lg p-6 shadow-md theme-border border">
+                <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
                 <div className="space-y-2">
                   {location.contact.phone && (
                     <div>
-                      <span className="text-sm font-medium text-gray-500">Phone:</span>
+                      <span className="text-sm font-medium theme-muted-text">Phone:</span>
                       <br />
                       <a href={`tel:${location.contact.phone}`} className="text-blue-600 hover:text-blue-800">
                         {location.contact.phone}
@@ -314,7 +314,7 @@ export default async function LocationDetailPage({ params }: Props) {
                   )}
                   {location.contact.email && (
                     <div>
-                      <span className="text-sm font-medium text-gray-500">Email:</span>
+                      <span className="text-sm font-medium theme-muted-text">Email:</span>
                       <br />
                       <a href={`mailto:${location.contact.email}`} className="text-blue-600 hover:text-blue-800">
                         {location.contact.email}
@@ -323,7 +323,7 @@ export default async function LocationDetailPage({ params }: Props) {
                   )}
                   {location.contact.website && (
                     <div>
-                      <span className="text-sm font-medium text-gray-500">Website:</span>
+                      <span className="text-sm font-medium theme-muted-text">Website:</span>
                       <br />
                       <a
                         href={location.contact.website}
