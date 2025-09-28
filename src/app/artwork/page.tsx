@@ -5,6 +5,7 @@ import Link from "next/link";
 import { artworkQuery } from "@/lib/queries";
 import { formatPrice } from "@/lib/config";
 import type { Metadata } from "next";
+import ScrollRestoration from "@/components/scroll-restoration";
 
 export const metadata: Metadata = {
   title: "My Artwork | Vicki Danielson Art",
@@ -65,6 +66,7 @@ export default async function ArtworkPage() {
 
   return (
     <main className="mx-auto max-w-6xl p-6">
+      <ScrollRestoration />
       {/* Header */}
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-bold mb-4">My Artwork</h1>

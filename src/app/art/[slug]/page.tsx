@@ -1,9 +1,9 @@
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
-import Link from "next/link";
 import { artworkBySlugQuery } from "@/lib/queries";
 import BuyButton from "@/components/buy-button";
+import SmartBackButton from "@/components/smart-back-button";
 
 // Type for slug data from Sanity
 interface SlugItem {
@@ -28,22 +28,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
   return (
     <div className="mx-auto max-w-5xl p-6">
       {/* Back to My Artwork Navigation */}
-      <div className="mb-6">
-        <Link
-          href="/artwork"
-          className="inline-flex items-center text-sm theme-muted-text hover:opacity-80 transition-opacity group"
-        >
-          <svg
-            className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to My Artwork
-        </Link>
-      </div>
+      <SmartBackButton />
 
       {/* Main Content */}
       <main className="grid gap-6 lg:grid-cols-2">
