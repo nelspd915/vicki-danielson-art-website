@@ -22,6 +22,7 @@ export default function Header({ homepageData }: HeaderProps) {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/gallery", label: "Gallery" },
+    { href: "/locations", label: "Locations" },
     { href: "/contact", label: "Contact" },
     { href: "/studio", label: "Studio" }
   ];
