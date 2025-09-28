@@ -2,7 +2,7 @@
 
 export default function ScrollButton() {
   const handleClick = () => {
-    const element = document.getElementById("gallery");
+    const element = document.getElementById("artwork");
     if (element) {
       element.scrollIntoView({
         behavior: "smooth",

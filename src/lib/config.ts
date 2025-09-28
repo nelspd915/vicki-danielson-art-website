@@ -2,7 +2,7 @@
 export const siteConfig = {
   // Site information
   name: "Vicki Danielson Art",
-  description: "Contemporary art gallery featuring original paintings and artwork by Vicki Danielson",
+  description: "Contemporary artwork featuring original paintings by Vicki Danielson",
 
   // Contact information
   contact: {

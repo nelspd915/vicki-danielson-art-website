@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
           
           <p>I typically respond to all inquiries within 24-48 hours during business days. If your inquiry is urgent, please don't hesitate to call me directly.</p>
           
-          <p>In the meantime, feel free to browse my gallery for more beautiful artwork!</p>
+          <p>In the meantime, feel free to browse my artwork for more beautiful pieces!</p>
           
           <p>Best regards,<br>
           Vicki Danielson</p>

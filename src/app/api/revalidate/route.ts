@@ -57,8 +57,8 @@ export async function POST(request: NextRequest) {
         console.log("🎨 Revalidating artwork pages...");
         // Revalidate homepage (featured artworks)
         revalidatePath("/");
-        // Revalidate gallery page
-        revalidatePath("/gallery");
+        // Revalidate artwork page
+        revalidatePath("/artwork");
         // Revalidate specific artwork page if slug exists
         if (body.slug?.current) {
           revalidatePath(`/art/${body.slug.current}`);
@@ -74,14 +74,14 @@ export async function POST(request: NextRequest) {
         console.log("📄 Revalidating all pages...");
         // For unknown document types, revalidate key pages
         revalidatePath("/");
-        revalidatePath("/gallery");
+        revalidatePath("/artwork");
         break;
     }
 
     return NextResponse.json({
       message: "Revalidation triggered successfully",
       documentType: body._type,
-      paths: ["/", "/gallery", body.slug?.current ? `/art/${body.slug.current}` : null].filter(Boolean)
+      paths: ["/", "/artwork", body.slug?.current ? `/art/${body.slug.current}` : null].filter(Boolean)
     });
   } catch (error) {
     console.error("❌ Webhook error:", error);

@@ -30,7 +30,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
       {/* Back to My Artwork Navigation */}
       <div className="mb-6">
         <Link
-          href="/gallery"
+          href="/artwork"
           className="inline-flex items-center text-sm theme-muted-text hover:opacity-80 transition-opacity group"
         >
           <svg

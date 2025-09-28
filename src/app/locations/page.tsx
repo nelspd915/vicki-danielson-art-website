@@ -145,7 +145,7 @@ export default async function LocationsPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <Link
-            href="/gallery"
+            href="/artwork"
             className="inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors mb-6"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -192,19 +192,15 @@ function LocationCard({ location, featured = false }: { location: Location; feat
   const imageUrl = location.images?.[0] ? urlFor(location.images[0])?.url() : null;
 
   return (
-    <div
-      className={`group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 ${
-        featured ? "border-2 border-amber-200" : ""
-      }`}
-    >
+    <div className={`bg-white rounded-2xl shadow-lg overflow-hidden ${featured ? "border-2 border-amber-200" : ""}`}>
       {/* Image */}
       {imageUrl && (
-        <div className={`relative ${featured ? "h-64" : "h-48"} bg-gray-100 overflow-hidden`}>
+        <div className={`relative ${featured ? "h-64" : "h-48"} bg-gray-100`}>
           <Image
             src={imageUrl}
             alt={location.images?.[0]?.alt || `${location.name} storefront`}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover"
             sizes={
               featured ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             }
@@ -229,9 +225,7 @@ function LocationCard({ location, featured = false }: { location: Location; feat
       {/* Content */}
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
-          <h3 className="text-xl font-semibold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors duration-300">
-            {location.name}
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-900 leading-tight">{location.name}</h3>
           <span className="text-sm text-gray-500 capitalize bg-gray-100 px-2 py-1 rounded ml-3 flex-shrink-0">
             {location.type}
           </span>

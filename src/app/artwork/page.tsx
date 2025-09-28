@@ -2,7 +2,7 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import Link from "next/link";
-import { galleryQuery } from "@/lib/queries";
+import { artworkQuery } from "@/lib/queries";
 import { formatPrice } from "@/lib/config";
 import type { Metadata } from "next";
 
@@ -33,8 +33,8 @@ interface Artwork {
 
 export const revalidate = 60; // ISR: refresh every minute
 
-export default async function GalleryPage() {
-  const artworks = await client.fetch(galleryQuery);
+export default async function ArtworkPage() {
+  const artworks = await client.fetch(artworkQuery);
 
   // Filter artworks: show all except hidden
   const visibleArtworks = artworks?.filter((art: Artwork) => art.status !== "Hidden") || [];
@@ -117,7 +117,7 @@ export default async function GalleryPage() {
         </div>
       </div>
 
-      {/* Consolidated Gallery */}
+      {/* Consolidated Artwork */}
       {sortedArtworks.length > 0 ? (
         <section>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -225,7 +225,7 @@ export default async function GalleryPage() {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold mb-2">Gallery Coming Soon</h3>
+          <h3 className="text-xl font-semibold mb-2">Artwork Coming Soon</h3>
           <p className="theme-muted-text mb-6">
             New artworks are being added to the collection. Please check back soon!
           </p>

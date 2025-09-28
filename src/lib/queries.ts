@@ -1,4 +1,4 @@
-export const galleryQuery = `*[_type=="artwork"] | order(featured desc, year desc, _createdAt desc)[0...60]{
+export const artworkQuery = `*[_type=="artwork"] | order(featured desc, year desc, _createdAt desc)[0...60]{
   _id,
   title,
   "slug": slug.current,
